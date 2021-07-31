@@ -1,3 +1,5 @@
+const morgan = require('morgan'); 
+const helmet = require('helmet');
 const Joi = require('joi');
 const express = require('express');
 const app = express();
@@ -18,6 +20,8 @@ app.get( '/api/courses', (request, respond) => {
 
     respond.send( courses );
 });
+app.use(helmet() );
+app.use(morgan('tiny'));
 
 
 app.post('/api/courses', (req, res) => {

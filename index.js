@@ -2,10 +2,34 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const Joi = require('joi');
 const express = require('express');
+const mysql = require('mysql');
 const app = express();
 app.use(express.json()); 
 
+// connect sql with nodejs
+let con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "tiger",
+    database : "library"
+  });
+  
+  con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+  });
 
+  con.query(  'select * from `customers` '  , function (err, result) {
+    if (err) throw err;
+    console.log(result[1].customer_name );
+  });
+
+  con.query( 'select * from customers where customer_id = ? ', ['2'], function (err, result){
+    if (err) throw err;
+    console.log(result);
+  } );
+  
+con.end();
 const courses = [
     { id: 1, name: 'course1'},
     { id : 2, name: 'course2'},
@@ -17,7 +41,7 @@ app.get( '/', (request, respond) => {
 } );
 
 app.get( '/api/courses', (request, respond) => {
-
+    const courses = getCoursesFromdb();
     respond.send( courses );
 });
 app.use(helmet() );
